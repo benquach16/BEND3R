@@ -1,0 +1,5 @@
+C:\IrrlichtLime-1.4\bin\Debug\01.HelloWorld.exe
+C:\IrrlichtLime-1.4\bin\Debug\01.HelloWorld.pdb
+C:\IrrlichtLime-1.4\examples\01.HelloWorld\obj\x86\Debug\01.HelloWorld.csprojResolveAssemblyReference.cache
+C:\IrrlichtLime-1.4\examples\01.HelloWorld\obj\x86\Debug\01.HelloWorld.exe
+C:\IrrlichtLime-1.4\examples\01.HelloWorld\obj\x86\Debug\01.HelloWorld.pdb
