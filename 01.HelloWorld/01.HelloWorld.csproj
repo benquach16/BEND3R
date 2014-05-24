@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Callback.cs" />
     <Compile Include="CustomNode.cs" />
     <Compile Include="KeyListener.cs" />
     <Compile Include="MeshGenerator.cs" />
