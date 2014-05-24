@@ -6,13 +6,12 @@
 //-----------------------------------------------------------------------------
 // Global variables
 //-----------------------------------------------------------------------------
-float3 mNewLightPos;
-float4 mNewLightColor; 
 float4x4 mWorldViewProj; // World * View * Projection transformation
 float4x4 mInvWorld;      // Inverted world matrix
 float4x4 mTransWorld;    // Transposed world matrix
 float3 mLightPos;        // Light position
-
+float3 mNewLightPos;	//New Light position
+float4 mNewLightColor; 
 float4 mLightColor;      // Light color
 
 
@@ -45,16 +44,21 @@ VS_OUTPUT vertexMain(in float4 vPosition : POSITION,
 
 	// calculate light vector, vtxpos - lightpos
 	float3 lightVector = worldpos - mLightPos;
-
+	float3 newLightVector = worldpos - mNewLightPos;
+	newLightVector = normalize(newLightVector);
 	// normalize light vector
 	lightVector = normalize(lightVector);
 	// calculate light color
 	float3 tmp = dot(-lightVector, normal);
+	float3 tmp2 = dot(-newLightVector, normal);
 	tmp = lit(tmp.x, tmp.y, 1.0);
 	tmp = mLightColor * tmp.y;
+	tmp2 = lit(tmp2.x, tmp2.y, 1.0);
+	tmp2 = mNewLightColor* tmp2.y;
+	tmp = tmp + tmp2;
 	Output.Diffuse = float4(tmp.x, tmp.y, tmp.z, 0);
 	Output.TexCoord = texCoord;
-
+	
 	return Output;
 }
 
@@ -78,7 +82,7 @@ PS_OUTPUT pixelMain(float2 TexCoord : TEXCOORD0,
 
 	// multiply with diffuse and do other senseless operations
 	Output.RGBColor = Diffuse * col;
-	Output.RGBColor *= 1.0;
+	Output.RGBColor *= 2.0;
 
 	return Output;
 }

@@ -94,7 +94,10 @@ namespace Program
             //So we calculate based off of sin and cos and relative positions
             SceneCollisionManager collisionManager = device.SceneManager.SceneCollisionManager;
             Line3Df ray = device.SceneManager.SceneCollisionManager.GetRayFromScreenCoordinates(input);
+            //ray.End = new Vector3Df(0, 0, -1);
 
+            device.VideoDriver.SetTransform(TransformationState.World, new Matrix());
+            device.VideoDriver.Draw3DLine(ray, new Color(0, 255, 0));
             //calcLine.End = calcLine.End.Normalize();
             //calcLine.End *= new Vector3Df(20);
             // Tracks the current intersection point with the level or a mesh
@@ -179,7 +182,8 @@ namespace Program
                 shaderInvWorldId = services.GetVertexShaderConstantID("mInvWorld");
                 shaderLightPosId = services.GetVertexShaderConstantID("mLightPos");
                 shaderLightColorId = services.GetVertexShaderConstantID("mLightColor");
-
+                shaderNewLightColorId = services.GetVertexShaderConstantID("mNewLightColor");
+                shaderNewLightPosId = services.GetVertexShaderConstantID("mNewLightPos");
                 shaderFirstUpdate = false;
             }
 
@@ -215,11 +219,14 @@ namespace Program
             else
                 services.SetVertexShaderConstant(8, pos.ToArray());
 
+            Vector3Df newPos = new Vector3Df(100, 40, -40);
+            services.SetVertexShaderConstant(shaderNewLightPosId, newPos.ToArray());
 
             // set light color
 
-            Colorf col = new Colorf(0.0f, 0.5f, 0.5f, 0.5f);
-
+            Colorf col = new Colorf(0.5f,0.5f, 0.7f, 1.0f);
+            Colorf col2 = new Colorf(1.0f, 0.5f, 0.5f, 0.0f);
+            services.SetVertexShaderConstant(shaderNewLightColorId, col2.ToArray());
             if (useHighLevelShaders)
                 services.SetVertexShaderConstant(shaderLightColorId, col.ToArray());
             else
@@ -239,7 +246,10 @@ namespace Program
                 services.SetVertexShaderConstant(10, transpWorld.ToArray());
             }
         }
-
+        public void exportVertsTexCoordsNormals(Mesh t)
+        {
+            
+        }
         static void Main(string[] args)
         {
             Program p = new Program();
@@ -286,7 +296,7 @@ namespace Program
 			GPUProgrammingServices gpu = driver.GPUProgrammingServices;
 			MaterialType newMaterialType1 = MaterialType.Solid;
 			MaterialType newMaterialType2 = MaterialType.TransparentAddColor;
-
+            smgr.SaveScene("TEST");
 		    gpu.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
 
 				// create the shaders depending on if the user wanted high level or low level shaders
@@ -316,7 +326,9 @@ namespace Program
             int oldMouseY = mouseY;
 			while (device.Run())
             {
-                angle -= mouseX - oldMouseX;
+                //angle -= mouseX - oldMouseX;
+                //angleY -= mouseY - oldMouseY;
+                oldMouseY = mouseY;
                 oldMouseX = mouseX;
                 if (angle > 360)
                     angle -= 360;
