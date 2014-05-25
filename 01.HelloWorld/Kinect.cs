@@ -23,11 +23,13 @@ namespace _01.HelloWorld
         bool leftOpenRightFist = false;
         bool leftFistRightL = false;
         bool leftLRightL = false;
+        bool justEnabledPotterWheel = false;
 
         public bool isRotating = false;
         public bool isTranslating = false;
         public bool isZoom = false;
         public bool isMorphing = false;
+        public bool potterWheelMode = false;
 
         double initAngle = 0;
         double initDistLR = 0.0d;
@@ -197,6 +199,10 @@ namespace _01.HelloWorld
             ///////////////////////////////////////////////////////////////////////////////////////
             int left = 0;
             int right = 1;
+            /*if (data.Hands.Count == 1)
+            {
+                Console.WriteLine("Num fingers: " + data.Hands[0].FingerCount);
+            }*/
             if (data.Hands.Count < 2)
             {
                 return;
