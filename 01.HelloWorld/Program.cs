@@ -11,7 +11,7 @@ using IrrlichtLime.GUI;
 
 namespace Program
 {
-	class Program
+	class Application
     {
         float ballRadius = 50f;
         static IrrlichtDevice device;
@@ -34,8 +34,8 @@ namespace Program
             if (e.Type == EventType.Mouse)
             {
                 //handle mouse events
-                mouseX = e.Mouse.X;
-                mouseY = e.Mouse.Y;
+                //mouseX = e.Mouse.X;
+                //mouseY = e.Mouse.Y;
                 mouseL = e.Mouse.IsLeftPressed();
                 mouseR = e.Mouse.IsRightPressed();
             }
@@ -75,7 +75,7 @@ namespace Program
                  
             }
 
-            int radius = 2;
+            //int radius = 2;
             //for (; radius > 0; radius--)
             //{// this should give a staircase like effect
                 //v[min - radius].Position = new Vector3Df(v[min - radius].Position + v[min - radius].Normal * direction);
@@ -94,10 +94,7 @@ namespace Program
             //So we calculate based off of sin and cos and relative positions
             SceneCollisionManager collisionManager = device.SceneManager.SceneCollisionManager;
             Line3Df ray = device.SceneManager.SceneCollisionManager.GetRayFromScreenCoordinates(input);
-            //ray.End = new Vector3Df(0, 0, -1);
 
-            device.VideoDriver.SetTransform(TransformationState.World, new Matrix());
-            device.VideoDriver.Draw3DLine(ray, new Color(0, 255, 0));
             //calcLine.End = calcLine.End.Normalize();
             //calcLine.End *= new Vector3Df(20);
             // Tracks the current intersection point with the level or a mesh
@@ -171,6 +168,8 @@ namespace Program
         static int shaderTextureId;
         static int shaderNewLightPosId;
         static int shaderNewLightColorId;
+        static float mfX = 0;
+        static float mfY = 0;
         static void gpu_OnSetConstants(MaterialRendererServices services, int userData)
         {
             VideoDriver driver = services.VideoDriver;
@@ -224,7 +223,7 @@ namespace Program
 
             // set light color
 
-            Colorf col = new Colorf(0.5f,0.5f, 0.7f, 1.0f);
+            Colorf col = new Colorf(0.5f, 0.5f, 0.7f, 1.0f);
             Colorf col2 = new Colorf(1.0f, 0.5f, 0.5f, 0.0f);
             services.SetVertexShaderConstant(shaderNewLightColorId, col2.ToArray());
             if (useHighLevelShaders)
@@ -246,21 +245,20 @@ namespace Program
                 services.SetVertexShaderConstant(10, transpWorld.ToArray());
             }
         }
-        public void exportVertsTexCoordsNormals(Mesh t)
-        {
-            
-        }
+
         static void Main(string[] args)
         {
-            Program p = new Program();
+            Application p = new Application();
         }
-		public Program()
+		public Application()
 		{
-            mouseX = 0; mouseY = 0; mouseL = false; mouseR = false;
+
+            _01.HelloWorld.Kinect kinect = new _01.HelloWorld.Kinect();
+            mfX = mouseX = 512; mfY = mouseY = 375; mouseL = false; mouseR = false;
             //device = IrrlichtDevice.CreateDevice(
             //    DriverType.Direct3D9, new Dimension2Di(800, 600), 16, false, true, false);
             device = IrrlichtDevice.CreateDevice(
-                DriverType.Direct3D9, new Dimension2Di(800, 600), 32, false, true, false);
+                DriverType.Direct3D9, new Dimension2Di(1024, 768), 32, false, true, false);
             
 			device.SetWindowCaption("Kinect Modeller");
 
@@ -279,11 +277,12 @@ namespace Program
             triselect.Drop();
             //t = smgr.AddMeshSceneNode(smgr.GetMesh("../../media/sphere.x"));
             //smgr
-            t.SetMaterialTexture(0, driver.GetTexture("../../media/rockwall.jpg"));
+            t.SetMaterialTexture(0, driver.GetTexture("rockwall.jpg"));
             //t.SetMaterialFlag(MaterialFlag.Lighting, true);
             t.GetMaterial(0).SpecularColor.Set(0, 0, 0);
             //t.GetMaterial(0).Lighting = true;
             t.GetMaterial(0).NormalizeNormals = false;
+            //t.AddShadowVolumeSceneNode();
  //           driver.GPUProgrammingServices.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
             /*
              MaterialType shaderMat = MaterialType.Solid;
@@ -296,16 +295,16 @@ namespace Program
 			GPUProgrammingServices gpu = driver.GPUProgrammingServices;
 			MaterialType newMaterialType1 = MaterialType.Solid;
 			MaterialType newMaterialType2 = MaterialType.TransparentAddColor;
-            smgr.SaveScene("TEST");
+            
 		    gpu.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
 
 				// create the shaders depending on if the user wanted high level or low level shaders
 
                 newMaterialType1 = gpu.AddHighLevelShaderMaterialFromFiles(
-                    "C:/IrrlichtLime-1.4/examples/01.HelloWorld/d3d9.hlsl", "vertexMain", VertexShaderType.VS_1_1,
-                    "C:/IrrlichtLime-1.4/examples/01.HelloWorld/d3d9.hlsl", "pixelMain", PixelShaderType.PS_1_1,
+                    "d3d9.hlsl", "vertexMain", VertexShaderType.VS_1_1,
+                    "d3d9.hlsl", "pixelMain", PixelShaderType.PS_1_1,
                     MaterialType.Solid, 0,GPUShadingLanguage.Default);
-                t.SetMaterialType(newMaterialType1);
+            t.SetMaterialType(newMaterialType1);
             //t.GetMaterial(0).Wireframe = true;
             //t.DebugDataVisible = DebugSceneType.Full;
             //t.AddShadowVolumeSceneNode(null, -1, false, 1000.0f);
@@ -324,12 +323,30 @@ namespace Program
             double angleY = 20.0f;
             int oldMouseX = mouseX;
             int oldMouseY = mouseY;
-			while (device.Run())
+            while (device.Run())
             {
-                //angle -= mouseX - oldMouseX;
-                //angleY -= mouseY - oldMouseY;
-                oldMouseY = mouseY;
-                oldMouseX = mouseX;
+                if (kinect.isTranslating && (kinect.translation.X < 30 && kinect.translation.X > -30))
+                {
+                    mfX -= (int)(kinect.translation.X);
+                    mfY -= (int)(kinect.translation.Y);
+
+                    Console.WriteLine(mouseX + ", " + mouseY + " ----------------- " + (int)(kinect.translation.X) + ", " + (int)(kinect.translation.Y));
+                }
+
+                kinect.resetTranslation();
+                /*
+                if (getDistance((int)mfX, (int)mfY, 512, 384) > 150)
+                {
+                    mfX = 512; mfY= 384;
+                }*/
+                
+                
+                mouseX = Math.Abs((int)mfX) % 1024;
+                mouseY = Math.Abs((int)mfY) % 768;
+                //mouseX = kinect.position.X;
+                
+                device.CursorControl.Position = new Vector2Di(mouseX, mouseY);
+                angle -= 2.0f;
                 if (angle > 360)
                     angle -= 360;
                 else if (angle < 0)
@@ -373,5 +390,9 @@ namespace Program
 
 			device.Drop();
 		}
+        public double getDistance(int x1, int x2, int y1, int y2)
+        {
+            return Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        }
 	}
 }

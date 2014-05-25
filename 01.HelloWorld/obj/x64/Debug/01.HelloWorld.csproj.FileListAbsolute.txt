@@ -1,0 +1,17 @@
+D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\bin\x64\Debug\01.HelloWorld.exe
+D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\bin\x64\Debug\01.HelloWorld.pdb
+D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\bin\x64\Debug\IrrlichtLime.dll
+D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\obj\x64\Debug\01.HelloWorld.exe
+D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\obj\x64\Debug\01.HelloWorld.pdb
+D:\01.HelloWorld\bin\x64\Debug\01.HelloWorld.exe
+D:\01.HelloWorld\bin\x64\Debug\01.HelloWorld.pdb
+D:\01.HelloWorld\bin\x64\Debug\CCT.NUI.Core.dll
+D:\01.HelloWorld\bin\x64\Debug\CCT.NUI.HandTracking.dll
+D:\01.HelloWorld\bin\x64\Debug\CCT.NUI.KinectSDK.dll
+D:\01.HelloWorld\bin\x64\Debug\CCT.NUI.Visual.dll
+D:\01.HelloWorld\bin\x64\Debug\IrrlichtLime.dll
+D:\01.HelloWorld\bin\x64\Debug\OpenNI.net.dll
+D:\01.HelloWorld\bin\x64\Debug\XnVNITE.net.dll
+D:\01.HelloWorld\obj\x64\Debug\01.HelloWorld.csprojResolveAssemblyReference.cache
+D:\01.HelloWorld\obj\x64\Debug\01.HelloWorld.exe
+D:\01.HelloWorld\obj\x64\Debug\01.HelloWorld.pdb
