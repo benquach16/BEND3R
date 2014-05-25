@@ -12,3 +12,5 @@ D:\bin\Debug\01.HelloWorld.pdb
 D:\01.HelloWorld\obj\x86\Debug\01.HelloWorld.exe
 D:\01.HelloWorld\obj\x86\Debug\01.HelloWorld.pdb
 D:\01.HelloWorld\obj\x86\Debug\01.HelloWorld.csprojResolveAssemblyReference.cache
+D:\bin\Debug\01.HelloWorld.exe.config
+D:\01.HelloWorld\obj\x86\Debug\01.HelloWorld.csproj.App.config

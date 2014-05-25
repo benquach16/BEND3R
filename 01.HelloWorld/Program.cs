@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Linq;
 using System.Text;
+using System.Net;
+using SendGrid;
+
 
 using IrrlichtLime;
 using IrrlichtLime.Core;
@@ -9,9 +13,11 @@ using IrrlichtLime.Video;
 using IrrlichtLime.Scene;
 using IrrlichtLime.GUI;
 
+
+
 namespace Program
 {
-	class Application
+    class Application
     {
         double deltaAngle = 1.0d;
         float ballRadius = 50f;
@@ -25,6 +31,7 @@ namespace Program
         bool potterWheelDown = false;
         bool leftKeyPressed = false;
         bool rightKeyPressed = false;
+        bool isCyl = true;
         static Dictionary<KeyCode, bool> KeyIsDown = new Dictionary<KeyCode, bool>();
 
         public bool device_OnEvent(Event e)
@@ -63,23 +70,23 @@ namespace Program
             tri.Drop();
             int size = t.Mesh.MeshBuffers[0].VertexCount;
 
-            
+
             int min = 0;
-            
+
             float minDist = v[0].Position.GetDistanceFromSQ(position);
             for (int i = 1; i < size; i++)
             {
                 //nsole.WriteLine(v[i].Position.SphericalCoordinateAngles.X);
                 //query verts
-                 
-                 float currDist = v[i].Position.GetDistanceFromSQ(position);
+
+                float currDist = v[i].Position.GetDistanceFromSQ(position);
                 // float currDist = v[i].TCoords - position;
-                 if (currDist < minDist)
-                 {
-                     min = i;
-                     minDist = currDist;
-                 }
-                 
+                if (currDist < minDist)
+                {
+                    min = i;
+                    minDist = currDist;
+                }
+
             }
             //int radius = 2;
             //for (; radius > 0; radius--)
@@ -127,7 +134,7 @@ namespace Program
             //for (; radius > 0; radius--)
             //{// this should give a staircase like effect
             //v[min - radius].Position = new Vector3Df(v[min - radius].Position + v[min - radius].Normal * direction);
-            if ((v[min].Position.X * v[min].Position.X + v[min].Position.Z * v[min].Position.Z) > 400 || direction.X > 0)
+            if ((v[min].Position.X * v[min].Position.X + v[min].Position.Z * v[min].Position.Z) > 100 || direction.X > 0)
             {
                 Console.WriteLine("Min = " + min);
                 v[min].Position = new Vector3Df(v[min].Position + v[min].Normal * 2 * direction);
@@ -184,7 +191,23 @@ namespace Program
             Console.WriteLine("Writing Mesh");
 
             // write OBJ MESH header
+            var username = "benquach16";
+            var pswd = "visiblepassword";
 
+            var myMessage = new SendGridMessage();
+            myMessage.AddTo("email.address@example.com");
+            myMessage.From = new MailAddress("jane.doe@school.edu", "Jane Doe");
+            myMessage.Subject = "Here is your model file";
+            /*
+            string[] lines = System.IO.File.ReadAllLines(@"./Saved.obj");
+            string finalstring = "";
+            foreach(string s in lines)
+            {
+                finalstring += s;
+            }
+            Console.WriteLine(finalstring);
+            myMessage.Text = finalstring;*/
+            myMessage.AddAttachment(@"./Saved.obj");
             string name = (device.FileSystem.GetFileBasename(device.SceneManager.MeshCache.GetMeshName(mesh).ToString(), false) + ".mtl");
             file.Write(stringToByte("# exported by Irrlicht\n"));
             file.Write(stringToByte("mtllib "));
@@ -325,6 +348,7 @@ namespace Program
                 }
                 file.Drop();
             }
+
             return true;
         }
 
@@ -492,27 +516,27 @@ namespace Program
         {
             Application p = new Application();
         }
-		public Application()
-		{
+        public Application()
+        {
 
             _01.HelloWorld.Kinect kinect = new _01.HelloWorld.Kinect();
-            mfX = mouseX = 512; mfY = mouseY = 375; mouseL = false; mouseR = false;
+            mfX = mouseX = 840; mfY = mouseY = 525; mouseL = false; mouseR = false;
             //device = IrrlichtDevice.CreateDevice(
             //    DriverType.Direct3D9, new Dimension2Di(800, 600), 16, false, true, false);
             //                                                           |
             device = IrrlichtDevice.CreateDevice(                    // \|/ Fullscreen
-                DriverType.Direct3D9, new Dimension2Di(1680, 1050), 32, true, true, false);
-            
-			device.SetWindowCaption("BENder3D");
+                DriverType.Direct3D9, new Dimension2Di(1680, 1050), 32, false, true, false);
 
-			VideoDriver driver = device.VideoDriver;
-			SceneManager smgr = device.SceneManager;
-			GUIEnvironment gui = device.GUIEnvironment;
-           
+            device.SetWindowCaption("BENder3D");
+
+            VideoDriver driver = device.VideoDriver;
+            SceneManager smgr = device.SceneManager;
+            GUIEnvironment gui = device.GUIEnvironment;
+
             device.OnEvent += new IrrlichtDevice.EventHandler(device_OnEvent);
             smgr.AmbientLight = new Colorf(128, 128, 128, 128);
             //smgr.AddLightSceneNode(null, new Vector3Df(0, 70, 0), new Colorf(122,0,122,0), (float)10);
-            MeshSceneNode box = smgr.AddCubeSceneNode(100, null, 9001, new Vector3Df(0.0f, -ballRadius*3/2, 0.0f));
+            MeshSceneNode box = smgr.AddCubeSceneNode(100, null, 9001, new Vector3Df(0.0f, -ballRadius * 3 / 2, 0.0f));
             box.Scale = new Vector3Df(100.0f, 0.1f, 100.0f);
             //Mesh cyl = smgr.GeometryCreator.CreateCylinderMesh(ballRadius, 50, 256);
             //Mesh sphere = smgr.GeometryCreator.CreateSphereMesh(ballRadius, 16,16);
@@ -530,11 +554,11 @@ namespace Program
             t.GetMaterial(0).SpecularColor.Set(0, 0, 0);
             //t.GetMaterial(0).Lighting = true;
             t.GetMaterial(0).NormalizeNormals = false;
-            Texture citrus = driver.AddTexture(new Dimension2Di(200,200), "citrus.png");
-            gui.AddImage(citrus, new Vector2Di(824, 0), true);
-            gui.AddStaticText("Hey, Listen! Press C to switch the mesh to a cylinder!\n Press S to change to a sphere, and enter to send yourself the obj file!", new Recti(0,0,400,60));
+            /*Texture citrus = driver.AddTexture(new Dimension2Di(200, 200), "citrus.png");
+            gui.AddImage(citrus, new Vector2Di(824, 0), true);*/
+            gui.AddStaticText("Hey, Listen! Press C to switch the mesh to a cylinder!\n Press S to change to a sphere, and enter to send yourself the obj file!", new Recti(0, 0, 400, 60));
             //t.AddShadowVolumeSceneNode();
- //           driver.GPUProgrammingServices.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
+            //           driver.GPUProgrammingServices.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
             /*
              MaterialType shaderMat = MaterialType.Solid;
              shaderMat = driver.GPUProgrammingServices.AddHighLevelShaderMaterialFromFiles("C:/IrrlichtLime-1.4/examples/01.HelloWorld/bumpmap.hlsl", "VertexShaderFunction", VertexShaderType.VS_3_0,
@@ -542,24 +566,24 @@ namespace Program
   
             t.SetMaterialType(shaderMat);
             t.SetMaterialTexture(1, driver.GetTexture("../../media/rockwall_height.bmp"));*/
-            
-			GPUProgrammingServices gpu = driver.GPUProgrammingServices;
-			MaterialType newMaterialType1 = MaterialType.Solid;
-			MaterialType newMaterialType2 = MaterialType.TransparentAddColor;
-            
-		    gpu.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
 
-				// create the shaders depending on if the user wanted high level or low level shaders
+            GPUProgrammingServices gpu = driver.GPUProgrammingServices;
+            MaterialType newMaterialType1 = MaterialType.Solid;
+            MaterialType newMaterialType2 = MaterialType.TransparentAddColor;
 
-                newMaterialType1 = gpu.AddHighLevelShaderMaterialFromFiles(
-                    "d3d9.hlsl", "vertexMain", VertexShaderType.VS_1_1,
-                    "d3d9.hlsl", "pixelMain", PixelShaderType.PS_1_1,
-                    MaterialType.Solid, 0,GPUShadingLanguage.Default);
+            gpu.OnSetConstants += new GPUProgrammingServices.SetConstantsHandler(gpu_OnSetConstants);
+
+            // create the shaders depending on if the user wanted high level or low level shaders
+
+            newMaterialType1 = gpu.AddHighLevelShaderMaterialFromFiles(
+                "d3d9.hlsl", "vertexMain", VertexShaderType.VS_1_1,
+                "d3d9.hlsl", "pixelMain", PixelShaderType.PS_1_1,
+                MaterialType.Solid, 0, GPUShadingLanguage.Default);
             t.SetMaterialType(newMaterialType1);
             //t.GetMaterial(0).Wireframe = true;
             //t.DebugDataVisible = DebugSceneType.Full;
             //t.AddShadowVolumeSceneNode(null, -1, false, 1000.0f);
-            smgr.AddLightSceneNode(null, new Vector3Df(40,150,-50), new Colorf(255,255,255,255), 250.0f);
+            smgr.AddLightSceneNode(null, new Vector3Df(40, 150, -50), new Colorf(255, 255, 255, 255), 250.0f);
             //CSampleSceneNode sceneNode = new CSampleSceneNode(smgr.RootNode, smgr, 667);
             camera = smgr.AddCameraSceneNode(null, new Vector3Df(0, 50, -140), new Vector3Df(0, 5, 0));
 
@@ -573,8 +597,12 @@ namespace Program
             double angleY = 20.0f;
             int oldMouseX = mouseX;
             int oldMouseY = mouseY;
+
+          
             
-			uint then = device.Timer.Time;
+            uint then = device.Timer.Time;
+            uint currentAutism = device.Timer.Time;
+            bool autism = false;
             while (device.Run())
             {
                 uint now = device.Timer.Time;
@@ -594,21 +622,21 @@ namespace Program
                 {
                     mfX = 512; mfY= 384;
                 }*/
-                
-                
+
+
                 mouseX = Math.Abs((int)mfX) % 1024;
                 mouseY = Math.Abs((int)mfY) % 768;
                 //mouseX = kinect.position.X;
-                
+
                 device.CursorControl.Position = new Vector2Di(mouseX, mouseY);
-                
+
                 if (!potterWheelDown && IsKeyDown(KeyCode.Up))
                 {
                     potterWheelDown = true;
                     deltaAngle = 1.0d;
                     potterWheelActivate = !potterWheelActivate;
                 }
-                else if(!IsKeyDown(KeyCode.Up))
+                else if (!IsKeyDown(KeyCode.Up))
                 {
                     potterWheelDown = false;
                 }
@@ -644,35 +672,48 @@ namespace Program
                     angle -= 360;
                 else if (angleY < 0)
                     angleY += 360;
-				driver.BeginScene(true, true, new Color(100, 101, 140));
+                driver.BeginScene(true, true, new Color(100, 101, 140));
                 camera.Target = new Vector3Df(0, 0, 0);
                 double temp = Math.Cos(angleY * PI / 180.0) * distance;
                 double X = Math.Sin(angle * PI / 180.0) * temp;
                 double Y = Math.Sin(angleY * PI / 180.0) * distance;
                 double Z = Math.Cos(angle * PI / 180.0) * temp;
                 camera.Position = new Vector3Df((float)X, (float)Y, (float)Z);
-				smgr.DrawAll();
+                smgr.DrawAll();
 
                 gui.DrawAll();
                 driver.SetMaterial(m);
                 Triangle3Df triangle = interpolateFrom2D(new Vector2Di(mouseX, mouseY));
-                if(kinect.isMorphing && kinect.morphDist > 0)
+                if (kinect.isMorphing && kinect.morphDist > 0)
                 //if (IsKeyDown(KeyCode.KeyW))
                 {
                     //Console.WriteLine("PRESSED KEY");
                     triangle.A *= new Vector3Df(0.5f);
                     triangle.B *= new Vector3Df(0.5f);
                     triangle.C *= new Vector3Df(0.5f);
-                    deformCyl(t, triangle.A, new Vector3Df(.5f / (potterWheelActivate ? (float)(1/deltaAngle) : 60f)), triangle);
-
+                    if (isCyl)
+                    {
+                        deformCyl(t, triangle.A, new Vector3Df(.5f / (potterWheelActivate ? (float)(1 / deltaAngle) : 60f)), triangle);
+                    }
+                    else
+                    {
+                        deformMesh(t, triangle.A, new Vector3Df(.5f / (potterWheelActivate ? (float)(1 / deltaAngle) : 60f)), triangle);
+                    }
                 }
-                if (kinect.isMorphing && kinect.morphDist < 0)
+                else if (kinect.isMorphing && kinect.morphDist < 0)
                 {
                     //Console.WriteLine("PRESSED KEY");
                     triangle.A *= new Vector3Df(1.5f);
                     triangle.B *= new Vector3Df(1.5f);
                     triangle.C *= new Vector3Df(1.5f);
-                    deformCyl(t, triangle.A, new Vector3Df(-.5f / (potterWheelActivate ? (float)(1/deltaAngle) : 60f)), triangle);
+                    if (isCyl)
+                    {
+                        deformCyl(t, triangle.A, new Vector3Df(-.5f / (potterWheelActivate ? (float)(1 / deltaAngle) : 60f)), triangle);
+                    }
+                    else
+                    {
+                        deformMesh(t, triangle.A, new Vector3Df(-.5f / (potterWheelActivate ? (float)(1 / deltaAngle) : 60f)), triangle);
+                    }
                 }
                 if (kinect.isZoom && kinect.zoomDist < 0)
                 {
@@ -699,8 +740,16 @@ namespace Program
 
                 //Change shape
 
+                if (IsKeyDown(KeyCode.KeyA))
+                {
+                    IrrlichtLime.IO.WriteFile file = device.FileSystem.CreateWriteFile("./Saved.obj");
+                    writeMesh(file, t.Mesh, 1);
+                    
+                    mail();
+                }
                 if (IsKeyDown(KeyCode.KeyC))
                 {
+                    isCyl = true;
                     t.Remove();
                     t = smgr.AddMeshSceneNode(smgr.GetMesh("pill.obj"));
                     //MeshSceneNode t = smgr.AddMeshSceneNode(cyl);
@@ -718,6 +767,7 @@ namespace Program
                 }
                 else if (IsKeyDown(KeyCode.KeyS))
                 {
+                    isCyl = false;
                     t.Remove();
                     t = smgr.AddSphereSceneNode(ballRadius, 32);
                     triselect = smgr.CreateTriangleSelector(t.Mesh, t);
@@ -732,14 +782,37 @@ namespace Program
                     t.GetMaterial(0).NormalizeNormals = false;
                     t.SetMaterialType(newMaterialType1);
                 }
-				driver.EndScene();
-			}
+                driver.EndScene();
+            }
 
-			device.Drop();
-		}
+            device.Drop();
+        }
         public double getDistance(int x1, int x2, int y1, int y2)
         {
             return Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         }
-	}
+       
+        public void mail()
+        {
+            var username = "exampleusername";
+            var pswd = "visiblepassword";
+
+            // Create credentials, specifying your user name and password.
+            var credentials = new NetworkCredential(username, pswd);
+            var myMessage = new SendGridMessage();
+            myMessage.AddTo("email.address@example.com");
+            myMessage.From = new MailAddress("jane.doe@school.edu", "Jane Doe");
+            myMessage.Subject = "Here is your model file";
+            myMessage.Text = "FILE";
+			
+            myMessage.AddAttachment(@"C:/Saved.obj");
+            
+            
+            var transportWeb = new Web(credentials);
+
+            // Send the email.
+            transportWeb.Deliver(myMessage);
+        }
+    
+    }
 }
