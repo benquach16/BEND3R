@@ -3,11 +3,3 @@ C:\IrrlichtLime-1.4\bin\Debug\01.HelloWorld.pdb
 C:\IrrlichtLime-1.4\examples\01.HelloWorld\obj\x86\Debug\01.HelloWorld.csprojResolveAssemblyReference.cache
 C:\IrrlichtLime-1.4\examples\01.HelloWorld\obj\x86\Debug\01.HelloWorld.exe
 C:\IrrlichtLime-1.4\examples\01.HelloWorld\obj\x86\Debug\01.HelloWorld.pdb
-D:\Users\DYLAN\Documents\GitHub\bin\Debug\01.HelloWorld.exe
-D:\Users\DYLAN\Documents\GitHub\bin\Debug\01.HelloWorld.pdb
-D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\obj\x86\Debug\01.HelloWorld.exe
-D:\Users\DYLAN\Documents\GitHub\hackUCIGraphics\01.HelloWorld\obj\x86\Debug\01.HelloWorld.pdb
-D:\bin\Debug\01.HelloWorld.exe
-D:\bin\Debug\01.HelloWorld.pdb
-D:\01.HelloWorld\obj\x86\Debug\01.HelloWorld.exe
-D:\01.HelloWorld\obj\x86\Debug\01.HelloWorld.pdb
